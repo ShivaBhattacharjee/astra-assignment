@@ -41,7 +41,8 @@ export function VirtualTryOnInterface() {
     height: '',
     depth: ''
   });
-  const [demographics, setDemographics] = useState<string>('');
+  // Remove demographics, add systemPrompt
+  const [systemPrompt, setSystemPrompt] = useState<string>('');
   const [currentJob, setCurrentJob] = useState<JobStatus | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [resultImage, setResultImage] = useState<string | null>(null);
@@ -83,22 +84,18 @@ export function VirtualTryOnInterface() {
       toast.error('Please upload a jewelry image');
       return false;
     }
-    
     if (!jewelryType) {
       toast.error('Please select a jewelry type');
       return false;
     }
-    
     if (!dimensions.width || !dimensions.height || !dimensions.depth) {
       toast.error('Please enter all jewelry dimensions');
       return false;
     }
-    
-    if (!demographics && !customModel) {
-      toast.error('Please select model demographics or upload a custom model');
+    if (!systemPrompt && !customModel) {
+      toast.error('Please enter a model system prompt or upload a custom model');
       return false;
     }
-    
     return true;
   };
   
@@ -116,7 +113,7 @@ export function VirtualTryOnInterface() {
       formData.append('width', dimensions.width);
       formData.append('height', dimensions.height);
       formData.append('depth', dimensions.depth);
-      formData.append('demographics', demographics || 'Custom model');
+      formData.append('systemPrompt', systemPrompt || 'Custom model');
       formData.append('offsetX', positionOffset.x.toString());
       formData.append('offsetY', positionOffset.y.toString());
       
@@ -161,7 +158,7 @@ export function VirtualTryOnInterface() {
     setCustomModel(null);
     setJewelryType('');
     setDimensions({ width: '', height: '', depth: '' });
-    setDemographics('');
+    setSystemPrompt('');
     setCurrentJob(null);
     setIsProcessing(false);
     setResultImage(null);
@@ -273,31 +270,21 @@ export function VirtualTryOnInterface() {
             </div>
           </div>
           
-          {/* Model Selection */}
+          {/* Model Prompt or Custom Model Upload */}
           <div className="space-y-4">
             <Label className="text-base font-medium">
-              Model Selection *
+              Model System Prompt *
             </Label>
-            
-            <div className="space-y-2">
-              <Label htmlFor="model-type">Pre-defined Model</Label>
-              <Select value={demographics} onValueChange={setDemographics}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select model demographics" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="indian-female">Indian Female Model</SelectItem>
-                  <SelectItem value="indian-male">Indian Male Model</SelectItem>
-                  <SelectItem value="caucasian-female">Caucasian Female Model</SelectItem>
-                  <SelectItem value="caucasian-male">Caucasian Male Model</SelectItem>
-                  <SelectItem value="asian-female">Asian Female Model</SelectItem>
-                  <SelectItem value="asian-male">Asian Male Model</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
+            <Input
+              id="system-prompt"
+              type="text"
+              placeholder="Describe the model you want (e.g. 'High-fashion portrait photograph of a South Asian woman...')"
+              value={systemPrompt}
+              onChange={e => setSystemPrompt(e.target.value)}
+              className="w-full"
+              maxLength={400}
+            />
             <div className="text-center text-muted-foreground">OR</div>
-            
             <div className="space-y-2">
               <Label htmlFor="custom-model">Upload Custom Model</Label>
               <div className="flex items-center gap-4">
