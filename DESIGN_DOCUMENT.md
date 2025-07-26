@@ -6,7 +6,7 @@
 
 ## 🎯 System Overview
 
-The AI-Powered Jewelry Virtual Try-On System is a sophisticated web application that allows users to virtually try on jewelry pieces using OpenAI's advanced image generation models. The system now focuses on high-fidelity photorealistic results rather than manual canvas manipulation, utilizing GPT Image 1 for model generation and DALL-E 3 for the final high-fidelity jewelry try-on.
+The AI-Powered Jewelry Virtual Try-On System is a sophisticated web application that allows users to virtually try on jewelry pieces using OpenAI's advanced image generation models. The system now focuses on high-fidelity photorealistic results rather than manual canvas manipulation, utilizing GPT Image 1 for model generation and for the final high-fidelity jewelry try-on.
 
 ### Key Features
 - **High-Fidelity Generation** using OpenAI's advanced models
