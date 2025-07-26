@@ -19,114 +19,123 @@
 
 ## 🎯 System Overview
 
-The AI-Powered Jewelry Virtual Try-On System is a sophisticated web application that allows users to virtually try on jewelry pieces using advanced computer vision and real-time canvas manipulation. The system combines Gemini Vision AI for intelligent positioning with interactive drag-and-drop functionality for precise manual adjustments.
+The AI-Powered Jewelry Virtual Try-On System is a sophisticated web application that allows users to virtually try on jewelry pieces using OpenAI's advanced image generation models. The system now focuses on high-fidelity photorealistic results rather than manual canvas manipulation, utilizing GPT Image 1 for model generation and DALL-E 3 for the final high-fidelity jewelry try-on.
 
 ### Key Features
-- **Real-time drag & drop** jewelry positioning
-- **AI-powered smart positioning** using Gemini Vision API
-- **Advanced transformations** (rotation, scaling, perspective adjustment)
-- **High-resolution canvas** (1200×900) for professional quality
-- **Touch support** for mobile devices
-- **Anatomical analysis** for natural jewelry placement
+- **High-Fidelity Generation** using OpenAI's advanced models
+- **Photorealistic Results** that look like professional photography
+- **Simple Positioning Interface** for jewelry placement
+- **Custom Model Generation** via system prompts
+- **Professional Studio Quality** outputs
+- **Cross-platform Compatibility** for all devices
 
 ---
 
 ## 🏗️ Architecture
 
 ```mermaid
-graph TB
-    A[User Interface] --> B[React Component Layer]
-    B --> C[Canvas Rendering Engine]
-    B --> D[AI Positioning Service]
-    
-    C --> E[HTML5 Canvas API]
-    C --> F[Image Processing]
-    
-    D --> G[Gemini Vision API]
-    D --> H[Positioning Analysis]
-    
-    I[Model Image] --> F
-    J[Jewelry Image] --> F
-    
-    F --> K[Composite Image]
-    
-    L[User Input] --> M[Event Handlers]
-    M --> N[State Management]
-    N --> C
-    
-    O[API Routes] --> D
-    P[Environment Config] --> G
+flowchart TD
+    subgraph UI[User Interface]
+        A1[HighFidelityJewelry Component]
+        A2[Simple Positioning]
+        A3[Jewelry Upload]
+        A4[Model Generation]
+    end
+    subgraph S1[AI Model Generation]
+        B1[OpenAI GPT Image 1 API\n(Model Generation)]
+        B2[Custom Prompt System]
+        B3[Jewelry-Free Model Image]
+    end
+    subgraph S2[Jewelry Positioning]
+        C1[Simple Placement UI]
+        C2[Position Data]
+    end
+    subgraph S3[High-Fidelity Enhancement]
+        D1[Composite Image\n(Model + Jewelry)]
+        D2[OpenAI DALL-E 3 API\n(High-Fidelity Edit)]
+        D3[Photorealistic Output]
+    end
+
+    %% UI Flow
+    A4 -->|System Prompt| B1
+    A4 -->|Custom Upload| S2
+    B1 --> B2
+    B2 --> B3
+    B3 --> S2
+    A3 --> S2
+    S2 --> C1
+    C1 --> C2
+    C2 --> D1
+
+    %% High-Fidelity Generation
+    D1 --> D2
+    D2 --> D3
+
+    %% Output
+    D3 -->|Download/Preview| UI
+
+    %% Styles
+    style B1 fill:#ff6b6b,stroke:#ff5252,stroke-width:3px
+    style D2 fill:#ff6b6b,stroke:#ff5252,stroke-width:3px
+    style D3 fill:#4ecdc4,stroke:#26a69a,stroke-width:3px
 ```
 
 ---
 
 ## 🧩 Core Components
 
-### 1. RealTimeDraggableJewelry Component
-The main React component that orchestrates the entire virtual try-on experience.
+### 1. HighFidelityJewelry Component
+The main React component that orchestrates the high-fidelity jewelry try-on experience.
 
 **Key Responsibilities:**
-- Canvas management and rendering
-- User interaction handling (mouse/touch events)
-- State management for jewelry transformations
-- AI positioning integration
-- Export functionality
+- Simple positioning interface
+- Jewelry image management
+- API integration with OpenAI services
+- Result preview and download functionality
 
-### 2. Jewelry Positioning Service
-AI-powered service for intelligent jewelry placement analysis.
-
-**Key Responsibilities:**
-- Anatomical landmark detection
-- Optimal positioning calculations
-- Rotation and perspective analysis
-- Confidence scoring
-
-### 3. Canvas Transformation Engine
-Advanced 2D transformation system for realistic jewelry rendering.
+### 2. Model Generation Service
+AI-powered service for generating custom jewelry-free models using system prompts.
 
 **Key Responsibilities:**
-- Matrix-based transformations
-- Rotation and scaling
-- Perspective corrections
-- Alpha blending and transparency
+- Custom prompt handling
+- OpenAI GPT Image 1 integration
+- Jewelry-free model validation
+- Error handling and retry logic
+
+### 3. High-Fidelity Enhancement Service
+Advanced image generation service for photorealistic jewelry integration.
+
+**Key Responsibilities:**
+- OpenAI DALL-E 3 integration
+- High-fidelity composite generation
+- Image transformation and file conversion
+- Result validation
 
 ---
 
-## 🤖 AI Positioning Pipeline
+## 🤖 AI Image Generation Pipeline
 
 ```mermaid
 flowchart TD
-    A[User Uploads Model Image] --> B[Convert to Base64]
-    B --> C[Send to Gemini Vision API]
-    C --> D[Anatomical Analysis]
+    A[User Enters System Prompt or Uploads Image] --> B[System Prompt Processing]
+    B --> C1[Send to OpenAI GPT Image 1]
+    C1 --> D[Generate Jewelry-Free Model]
     
-    D --> E{Jewelry Type}
-    E -->|Necklace| F[Neck/Chest Analysis]
-    E -->|Earrings| G[Ear Position Analysis]
-    E -->|Ring| H[Hand/Finger Analysis]
-    E -->|Bracelet| I[Wrist/Arm Analysis]
+    A --> E[Jewelry Image Upload]
+    D --> F[Simple Positioning Interface]
+    E --> F
     
-    F --> J[Calculate Necklace Position]
-    G --> K[Calculate Earring Position]
-    H --> L[Calculate Ring Position]
-    I --> M[Calculate Bracelet Position]
+    F --> G[Create Composite Image]
+    G --> H[Send to OpenAI DALL-E 3]
+    H --> I[High-Fidelity Enhancement]
+    I --> J[Return Photorealistic Result]
     
-    J --> N[Determine Body Angle]
-    K --> N
-    L --> N
-    M --> N
+    J --> K{Quality Check}
+    K -->|Pass| L[Display Final Image]
+    K -->|Fail| M[Retry with Adjusted Parameters]
+    M --> H
     
-    N --> O[Calculate Rotation]
-    O --> P[Generate Perspective Adjustments]
-    P --> Q[Assign Confidence Score]
-    Q --> R[Return Positioning Data]
-    
-    R --> S{Confidence > 0.6?}
-    S -->|Yes| T[Apply AI Positioning]
-    S -->|No| U[Use Fallback Positioning]
-    
-    T --> V[Update UI State]
-    U --> V
+    L --> N[Download High-Resolution Result]
 ```
 
 ---
@@ -135,39 +144,31 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[App Launch] --> B[Upload Model Image]
-    B --> C[Upload Jewelry Image]
-    C --> D[Select Jewelry Type]
-    D --> E[Initialize Canvas]
+    A[App Launch] --> B{User Choice}
+    B -->|Generate Model| C[Enter System Prompt]
+    B -->|Use Custom| D[Upload Model Image]
     
-    E --> F[Apply Default Position]
-    F --> G{User Action}
+    C --> E[AI Model Generation]
+    D --> F[Model Validation]
     
-    G -->|Manual Drag| H[Update Position]
-    G -->|Scale Adjustment| I[Update Scale]
-    G -->|Rotation Control| J[Update Rotation]
-    G -->|AI Smart Position| K[Trigger AI Analysis]
-    G -->|Download| L[Export Image]
-    G -->|Reset| M[Restore Defaults]
+    E --> G[Upload Jewelry Image]
+    F --> G
     
-    H --> N[Redraw Canvas]
-    I --> N
-    J --> N
-    K --> O[AI Processing]
+    G --> H[Select Jewelry Type]
+    H --> I[Simple Positioning]
+    I --> J[Initiate High-Fidelity Generation]
     
-    O --> P{AI Success?}
-    P -->|Yes| Q[Apply AI Positioning]
-    P -->|No| R[Show Error/Fallback]
+    J --> K[Show Processing Status]
+    K --> L[Receive Enhanced Result]
     
-    Q --> N
-    R --> N
-    N --> G
+    L --> M{User Action}
     
-    L --> S[Generate Blob]
-    S --> T[Download File]
-    T --> G
+    M -->|Download| N[Save High-Res Image]
+    M -->|New Try-On| O[Reset Interface]
+    M -->|Adjust| P[Modify Position]
     
-    M --> F
+    P --> J
+    O --> B
 ```
 
 ---
@@ -178,54 +179,53 @@ flowchart TD
 sequenceDiagram
     participant User
     participant UI
-    participant Canvas
-    participant AI Service
-    participant Gemini API
+    participant ModelGenService
+    participant PositioningUI
+    participant OpenAIService
     
-    User->>UI: Upload Images
-    UI->>Canvas: Initialize with images
-    Canvas->>Canvas: Draw model background
-    Canvas->>Canvas: Apply default jewelry position
+    User->>UI: Enter system prompt or upload model
     
-    User->>UI: Click "Smart Position"
-    UI->>AI Service: Request positioning analysis
-    AI Service->>Gemini API: Send model image + jewelry type
+    alt Generate Model
+        UI->>ModelGenService: Send system prompt
+        ModelGenService->>OpenAIService: Request to GPT Image 1
+        OpenAIService->>ModelGenService: Return jewelry-free model
+        ModelGenService->>UI: Display generated model
+    else Use Custom Model
+        UI->>UI: Process uploaded image
+    end
     
-    Gemini API->>Gemini API: Analyze anatomy
-    Gemini API->>Gemini API: Calculate optimal position
-    Gemini API->>AI Service: Return positioning data
+    User->>UI: Upload jewelry image
+    User->>PositioningUI: Position jewelry on model
+    PositioningUI->>PositioningUI: Create composite image
     
-    AI Service->>AI Service: Validate response
-    AI Service->>UI: Return positioning result
-    UI->>Canvas: Apply transformations
-    Canvas->>Canvas: Redraw with new position
+    User->>UI: Click "Generate High-Fidelity"
+    UI->>OpenAIService: Send composite to DALL-E 3
+    OpenAIService->>OpenAIService: Process high-fidelity edit
+    OpenAIService->>UI: Return photorealistic result
     
-    User->>UI: Manual drag jewelry
-    UI->>Canvas: Update position in real-time
-    Canvas->>Canvas: Redraw continuously
-    
-    User->>UI: Adjust rotation/scale
-    UI->>Canvas: Apply transformations
-    Canvas->>Canvas: Update rendering
-    
-    User->>UI: Download result
-    UI->>Canvas: Generate final composite
-    Canvas->>User: Download high-res image
+    UI->>UI: Display enhanced image
+    User->>UI: Download final image
+    UI->>User: Save high-resolution file
 ```
 
 ---
 
 ## 🔧 API Specifications
 
-### Jewelry Positioning API
+### High-Fidelity Jewelry API
 
-**Endpoint:** `POST /api/jewelry-positioning`
+**Endpoint:** `POST /api/high-fidelity-jewelry`
 
 **Request:**
 ```json
 {
-  "modelImage": "base64_encoded_image_data",
-  "jewelryType": "necklace|ring|earrings|bracelet"
+  "personImage": "base64_encoded_image_data",
+  "jewelryImage": "base64_encoded_image_data",
+  "jewelryType": "necklace|ring|earrings|bracelet",
+  "positionData": {
+    "x": 600,
+    "y": 320
+  }
 }
 ```
 
@@ -233,69 +233,82 @@ sequenceDiagram
 ```json
 {
   "success": true,
-  "positioning": {
-    "position": {
-      "x": 600,
-      "y": 320
-    },
-    "scale": 0.6,
-    "rotation": -5.2,
-    "confidence": 0.92,
-    "anatomyPoints": {
-      "neck": {"x": 600, "y": 280},
-      "shoulders": {
-        "left": {"x": 520, "y": 350},
-        "right": {"x": 680, "y": 345}
-      },
-      "chest": {"x": 600, "y": 400},
-      "bodyAngle": -2.1
-    },
-    "adjustments": {
-      "scaleX": 1.05,
-      "scaleY": 0.98,
-      "skew": 1.2,
-      "opacity": 0.92
-    }
+  "resultImage": "base64_encoded_enhanced_image",
+  "processingTime": 4.2,
+  "validation": {
+    "isValid": true,
+    "naturalness": 0.92,
+    "quality": "high"
+  }
+}
+```
+
+### Model Generation API
+
+**Endpoint:** `POST /api/model-generation`
+
+**Request:**
+```json
+{
+  "systemPrompt": "High-fashion portrait photograph of a stunning South Asian woman...",
+  "jewelryType": "necklace|ring|earrings|bracelet",
+  "options": {
+    "lighting": "studio",
+    "pose": "neck-visible|hand-extended|ear-visible|default",
+    "background": "neutral"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "modelImage": "base64_encoded_model_image",
+  "validation": {
+    "isJewelryFree": true,
+    "confidence": 0.95,
+    "poseQuality": "excellent"
   }
 }
 ```
 
 ---
 
-## 🎭 Canvas Transformation System
+## 🎭 High-Fidelity Generation System
 
 ```mermaid
-graph LR
-    A[Canvas Context] --> B[Save State]
-    B --> C[Translate to Jewelry Position]
-    C --> D[Apply Rotation]
-    D --> E[Apply Skew/Perspective]
-    E --> F[Apply Scaling]
-    F --> G[Set Opacity]
-    G --> H[Draw Jewelry Image]
-    H --> I[Restore State]
+flowchart TD
+    A[Input Images] --> B[File Processing]
+    B --> C[Base64 Conversion]
+    C --> D[Simple Composition]
     
-    J[User Interactions] --> K{Interaction Type}
-    K -->|Drag| L[Update Position]
-    K -->|Rotate| M[Update Rotation]
-    K -->|Scale| N[Update Scale]
-    K -->|Adjust| O[Update Perspective]
+    D --> E[OpenAI API Integration]
+    E --> F[DALL-E 3 with High Fidelity]
+    F --> G[Image Processing]
     
-    L --> P[Trigger Redraw]
-    M --> P
-    N --> P
-    O --> P
+    G --> H[Base64 Decoding]
+    H --> I[Format Conversion]
+    I --> J[Quality Enhancement]
     
-    P --> A
+    J --> K[Final Image]
+    
+    L[User Position Data] --> D
+    M[Jewelry Type Context] --> F
+    N[Input Fidelity Settings] --> F
+    
+    O[System Prompts] --> P[Prompt Engineering]
+    P --> Q[Type-Specific Prompts]
+    Q --> F
 ```
 
-### Transformation Matrix Operations
+### OpenAI Integration
 
-1. **Translation**: `ctx.translate(x, y)`
-2. **Rotation**: `ctx.rotate(angle * Math.PI / 180)`
-3. **Scaling**: `ctx.scale(scaleX, scaleY)`
-4. **Skewing**: `ctx.transform(1, tan(skew), 0, 1, 0, 0)`
-5. **Alpha**: `ctx.globalAlpha = opacity`
+1. **Model Generation**: `GPT Image 1` for jewelry-free model creation
+2. **High-Fidelity Editing**: `DALL-E 3` with `input_fidelity: "high"` setting
+3. **Prompt Engineering**: Specialized prompts for each jewelry type
+4. **Image Processing**: Base64 conversion for API compatibility
+5. **Error Handling**: Automatic retry logic and validation
 
 ---
 
@@ -304,67 +317,66 @@ graph LR
 ### State Management Structure
 
 ```typescript
-interface JewelryState {
-  position: { x: number; y: number };
-  scale: { width: number; height: number };
-  rotation: number; // degrees
-  adjustments: {
-    scaleX: number;
-    scaleY: number;
-    skew: number;
-    opacity: number;
+interface VirtualTryOnState {
+  jewelryImage: File | null;
+  customModel: File | null;
+  systemPrompt: string;
+  jewelryType: string;
+  dimensions: {
+    width: string;
+    height: string;
+    depth: string;
   };
-  isDragging: boolean;
-  aiConfidence: number | null;
+  currentPosition: { x: number; y: number };
+  isProcessing: boolean;
+  resultImage: string | null;
+  modelImageData: string | null;
+  jewelryImageData: string | null;
 }
 ```
 
-### Event Handling System
+### High-Fidelity API Integration
 
-```mermaid
-flowchart TD
-    A[Mouse/Touch Event] --> B[Get Canvas Coordinates]
-    B --> C[Scale to Canvas Resolution]
-    C --> D[Apply Inverse Transformation]
-    D --> E{Hit Test}
-    E -->|Hit| F[Start Drag Operation]
-    E -->|Miss| G[Ignore Event]
-    
-    F --> H[Track Movement]
-    H --> I[Update Position State]
-    I --> J[Trigger Canvas Redraw]
-    J --> K{Still Dragging?}
-    K -->|Yes| H
-    K -->|No| L[End Drag Operation]
+```typescript
+// OpenAI API Integration for High-Fidelity Editing
+async function enhanceJewelryImage(composite: File, prompt: string) {
+  const formData = new FormData();
+  formData.append("image", composite);
+  formData.append("prompt", prompt);
+  formData.append("input_fidelity", "high");
+  
+  const response = await fetch("https://api.openai.com/v1/images/edits", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: formData
+  });
+  
+  const data = await response.json();
+  return data.data[0].b64_json;
+}
 ```
 
-### AI Prompt Engineering
+### System Prompt Engineering
 
 The system uses sophisticated prompts for each jewelry type:
 
-**Necklace Analysis:**
-- Neck and chest contour detection
-- Shoulder line angle calculation
-- Body tilt compensation
-- Clothing neckline consideration
+**Necklace Enhancement:**
+```
+Create a photorealistic image of a person wearing elegant jewelry. 
+The person is wearing a beautiful necklace that drapes naturally 
+around their neck and chest. The necklace should have realistic 
+weight, proper perspective, authentic metallic shine, and cast 
+natural shadows on the skin.
+```
 
-**Earring Analysis:**
-- Ear position detection
-- Head tilt analysis
-- Hair obstruction assessment
-- Gravity-based hang calculation
-
-**Ring Analysis:**
-- Hand pose detection
-- Finger identification
-- Knuckle positioning
-- Hand angle compensation
-
-**Bracelet Analysis:**
-- Wrist identification
-- Arm angle analysis
-- Sleeve detection
-- Natural curve fitting
+**Ring Enhancement:**
+```
+The person is wearing a stunning ring on their finger. The ring 
+should fit naturally, follow the finger's contours, have authentic 
+metallic reflections, and appear to have realistic weight and presence.
+```
 
 ---
 
@@ -374,71 +386,76 @@ The system uses sophisticated prompts for each jewelry type:
 ```mermaid
 graph TD
     A[Current System] --> B[Multi-jewelry Support]
-    A --> C[3D Transformation]
-    A --> D[Real-time Face Tracking]
-    A --> E[Lighting Adaptation]
+    A --> C[Style Transfer Options]
+    A --> D[Animated Results]
+    A --> E[Enhanced Lighting Models]
     
-    B --> F[Layer Management]
-    C --> G[Depth Perception]
-    D --> H[Live Camera Feed]
-    E --> I[Shadow Generation]
+    B --> F[Complete Outfit Generation]
+    C --> G[Designer Collections]
+    D --> H[3D Rotation of Result]
+    E --> I[Scene Adaptation]
 ```
 
 ### Phase 2: Integration Features
-- **Social Sharing**: Direct social media integration
-- **E-commerce**: Shopping cart and purchase flow
-- **AR Mode**: WebXR for immersive experience
-- **Cloud Processing**: Server-side rendering for complex operations
+- **Instant Try-On**: Camera integration for live try-on
+- **E-commerce**: Direct shopping cart integration
+- **Social Sharing**: Built-in sharing with image watermarks
+- **Custom Collection**: Save favorites to personalized collection
 
 ### Phase 3: Advanced Analytics
-- **User Behavior Tracking**: Interaction analytics
-- **A/B Testing**: UI/UX optimization
-- **Performance Monitoring**: Real-time performance metrics
-- **Conversion Tracking**: Business intelligence
+- **Style Preferences**: AI analysis of user preferences
+- **Recommendation Engine**: Personalized jewelry suggestions
+- **Engagement Metrics**: Try-on to purchase conversion tracking
+- **Trend Analysis**: Aggregate style preference data
 
 ---
 
 ## 📊 Performance Metrics
 
 ### Target Performance
-- **Canvas Rendering**: 60fps for smooth interactions
-- **AI Response Time**: < 3 seconds for positioning analysis
-- **Image Processing**: < 500ms for transformations
-- **Memory Usage**: < 100MB for large jewelry images
+- **API Response Time**: < 5 seconds for high-fidelity generation
+- **Image Quality**: Professional studio-quality results
+- **Prompt Efficiency**: Optimized prompts for best results
+- **Memory Usage**: Efficient image processing pipeline
 
 ### Quality Metrics
-- **AI Accuracy**: > 85% positioning confidence
-- **User Satisfaction**: Smooth drag interactions
-- **Visual Quality**: High-resolution output (1200×900)
-- **Cross-platform**: Desktop and mobile compatibility
+- **Photorealism**: Indistinguishable from professional photography
+- **Jewelry Integration**: Natural-looking placement and lighting
+- **Visual Quality**: High-resolution output (1024×1024)
+- **Cross-platform**: Consistent results across all devices
 
 ---
 
 ## 🔒 Security & Privacy
 
 ### Data Handling
-- **Image Processing**: Client-side only, no permanent storage
-- **API Security**: Rate limiting and input validation
-- **Privacy**: No personal data collection
+
+- **Image Processing**: Temporary storage only during processing
+- **API Security**: Authentication and rate limiting
+- **Privacy**: No personal data retention beyond session
 - **CORS**: Proper cross-origin resource sharing
 
 ### Error Handling
-- **Graceful Degradation**: Fallback positioning system
-- **User Feedback**: Clear error messages and loading states
-- **Recovery**: Auto-retry mechanisms for API failures
+
+- **Graceful Degradation**: Fallback options for API failures
+- **User Feedback**: Clear progress indicators and error messages
+- **Retry Logic**: Automatic retry with exponential backoff
+- **Validation**: Result quality verification before delivery
 
 ---
 
 ## 🛠️ Development Setup
 
 ### Environment Variables
+
 ```bash
-GEMINI_API_KEY=your_gemini_api_key_here
-REDIS_URL=redis://localhost:6379
+OPENAI_API_KEY=your_openai_api_key_here
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
 DATABASE_URL=postgresql://user:pass@localhost:5432/db
 ```
 
 ### Dependencies
+
 - **React 19**: UI framework
 - **Next.js 15**: Full-stack framework
 - **TypeScript**: Type safety
@@ -446,6 +463,7 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/db
 - **Lucide React**: Icons
 
 ### Development Commands
+
 ```bash
 npm run dev          # Start development server
 npm run build        # Build for production  
@@ -457,12 +475,12 @@ npm run type-check   # TypeScript validation
 
 ## 📝 Conclusion
 
-This AI-Powered Jewelry Virtual Try-On System represents a cutting-edge approach to e-commerce visualization, combining advanced computer vision with intuitive user interactions. The modular architecture ensures scalability, while the sophisticated AI integration provides professional-quality results that enhance the online shopping experience.
+This AI-Powered Jewelry Virtual Try-On System represents a cutting-edge approach to e-commerce visualization, leveraging OpenAI's advanced image generation models to create photorealistic jewelry try-on results. The system has evolved from manual canvas manipulation to high-fidelity AI-generated imagery that is indistinguishable from professional photography.
 
-The system's real-time capabilities, cross-platform compatibility, and extensible design make it suitable for both small jewelry retailers and large e-commerce platforms seeking to provide immersive product experiences to their customers.
+The shift to a prompt-based model generation system and high-fidelity editing API creates a streamlined user experience while delivering superior visual results. This approach is particularly valuable for jewelry retailers seeking to provide immersive product visualization without the complexity of traditional AR approaches.
 
 ---
 
-*Document Version: 2.0*  
+*Document Version: 3.0*  
 *Last Updated: July 26, 2025*  
 *Next Review: August 2025*
