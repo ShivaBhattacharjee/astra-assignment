@@ -116,9 +116,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/**
- * Create enhancement prompt based on jewelry type for DALL-E 3
- */
+
 function createEnhancementPrompt(
   jewelryType: string,
   customPrompt?: string
