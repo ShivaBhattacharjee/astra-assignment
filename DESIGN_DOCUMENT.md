@@ -1,17 +1,17 @@
 # 🎯 AI-Powered Jewelry Virtual Try-On System
-## Design Document v3.0 - High-Fidelity Edition
+## Design Document v2.0
 
 ---
 
 ## 📋 Table of Contents
 1. [System Overview](#system-overview)
-2. [High-Fidelity Architecture](#high-fidelity-architecture)
+2. [Architecture](#architecture)
 3. [Core Components](#core-components)
-4. [OpenAI Integration Pipeline](#openai-integration-pipeline)
+4. [AI Positioning Pipeline](#ai-positioning-pipeline)
 5. [User Interface Flow](#user-interface-flow)
 6. [Data Flow](#data-flow)
 7. [API Specifications](#api-specifications)
-8. [High-Fidelity Generation System](#high-fidelity-generation-system)
+8. [Canvas Transformation System](#canvas-transformation-system)
 9. [Technical Implementation](#technical-implementation)
 10. [Future enhancements](#future-enhancements)
 
@@ -19,108 +19,35 @@
 
 ## 🎯 System Overview
 
-The AI-Powered Jewelry Virtual Try-On System v3.0 introduces **high-fidelity image generation** using OpenAI's DALL-E 3 model. This revolutionary approach replaces complex manual positioning with AI-generated photorealistic results that look indistinguishable from professional jewelry photography.
+The AI-Powered Jewelry Virtual Try-On System is a sophisticated web application that allows users to virtually try on jewelry pieces using advanced computer vision and real-time canvas manipulation. The system combines Gemini Vision AI for intelligent positioning with interactive drag-and-drop functionality for precise manual adjustments.
 
 ### Key Features
-- **🎨 High-Fidelity Generation** using OpenAI DALL-E 3
-- **⚡ Simplified Workflow** - position once, generate professionally
-- **📐 Smart Positioning** with intuitive drag-and-drop
-- **🎯 Jewelry-Specific Prompts** optimized for each jewelry type
-- **📱 Mobile-Friendly** responsive design
-- **⬇️ High-Quality Downloads** in HD resolution
-- **🔄 Instant Previews** with real-time positioning
+- **Real-time drag & drop** jewelry positioning
+- **AI-powered smart positioning** using Gemini Vision API
+- **Advanced transformations** (rotation, scaling, perspective adjustment)
+- **High-resolution canvas** (1200×900) for professional quality
+- **Touch support** for mobile devices
+- **Anatomical analysis** for natural jewelry placement
 
 ---
 
-## 🏗️ High-Fidelity Architecture
-
+## 🏗️ Architecture
 
 ```mermaid
-flowchart TD
-    subgraph UI[User Interface]
-        A1[HighFidelityJewelry Component]
-        A2[Canvas Positioning]
-        A3[Jewelry Upload]
-        A4[Model Upload]
-    end
-    subgraph S1[AI Model Generation]
-        B1[OpenAI GPT Image 1 API\n(Model Generation)]
-        B2[Jewelry-Free Model Image]
-    end
-    subgraph S2[Jewelry Positioning]
-        C1[Canvas Drag & Drop]
-        C2[AI Smart Positioning\n(Gemini Vision API)]
-        C3[Position Data]
-    end
-    subgraph S3[High-Fidelity Enhancement]
-        D1[Composite Image\n(Model + Jewelry)]
-        D2[OpenAI DALL-E 3 API\n(High-Fidelity Edit)]
-        D3[Photorealistic Output]
-    end
-
-    %% UI Flow
-    A4 -->|Upload| B1
-    B1 --> B2
-    B2 --> A2
-    A3 --> A2
-    A2 --> C1
-    C1 --> D1
-    C2 --> C3
-    C3 --> C1
-
-    %% High-Fidelity Generation
-    D1 --> D2
-    D2 --> D3
-
-    %% Output
-    D3 -->|Download/Preview| UI
-
-    %% Styles
-    style B1 fill:#ff6b6b,stroke:#ff5252,stroke-width:3px
-    style D2 fill:#ff6b6b,stroke:#ff5252,stroke-width:3px
-    style D3 fill:#4ecdc4,stroke:#26a69a,stroke-width:3px
-```
-
-
-### Updated Workflow Overview
-1. **Model Generation**: User uploads a model photo or requests AI to generate a jewelry-free, high-fashion model image (OpenAI GPT Image 1).
-2. **Jewelry Upload & Positioning**: User uploads jewelry image and positions it on the model using drag-and-drop or AI Smart Positioning (Gemini Vision API).
-3. **Composite Creation**: The positioned jewelry and model image are composited on the canvas.
-4. **High-Fidelity Enhancement**: The composite is sent to OpenAI DALL-E 3 for photorealistic, studio-quality enhancement.
-5. **Professional Output**: User previews and downloads the final high-fidelity image.
-
----
-
-## 🎨 High-Fidelity Generation System
-
-### OpenAI DALL-E 3 Integration
-
-The system leverages OpenAI's most advanced image generation model to create photorealistic jewelry images that surpass traditional AR/VR approaches.
-
-#### Key Advantages:
-- **🔥 Photorealistic Quality**: Professional studio-quality results
-- **⚡ Simplified UX**: No complex controls or manual adjustments
-- **🎯 Context-Aware**: Understands jewelry types and natural placement
-- **💡 Intelligent Lighting**: Automatic shadows, reflections, and depth
-- **🔄 Consistent Results**: Reliable quality across different jewelry types
-
-#### Jewelry-Specific Prompting:
-
-```typescript
-// Necklace Enhancement
-"Create a photorealistic image of a person wearing elegant jewelry. 
-The person is wearing a beautiful necklace that drapes naturally 
-around their neck and chest. The necklace should have realistic 
-weight, proper perspective, authentic metallic shine, and cast 
-natural shadows on the skin."
-
-// Ring Enhancement  
-"The person is wearing a stunning ring on their finger. The ring 
-should fit naturally, follow the finger's contours, have authentic 
-metallic reflections, and appear to have realistic weight and presence."
-```
-
----
+graph TB
+    A[User Interface] --> B[React Component Layer]
+    B --> C[Canvas Rendering Engine]
+    B --> D[AI Positioning Service]
+    
+    C --> E[HTML5 Canvas API]
+    C --> F[Image Processing]
+    
+    D --> G[Gemini Vision API]
+    D --> H[Positioning Analysis]
+    
+    I[Model Image] --> F
+    J[Jewelry Image] --> F
+    
     F --> K[Composite Image]
     
     L[User Input] --> M[Event Handlers]
